@@ -13,7 +13,7 @@ class Settings():
         self.ship_speed_factor = 1.5
         self.ship_limit = 3
         #外星人设置
-        self.alien_speed_factor = 0.7
+        self.alien_speed_factor = 1
         self.fleet_drop_speed = 10   #指定有外星人撞到屏幕边缘时，外星人群向下移动的速度
         # fleet_direction为1表示向右移，为-1表示向左移
         self.fleet_direction = 1
