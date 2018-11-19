@@ -15,14 +15,19 @@ class Settings():
         self.fleet_drop_speed = 10   #指定有外星人撞到屏幕边缘时，外星人群向下移动的速度
 
         #子弹设置  宽3像素、高15像素的深灰色子弹。子弹速度比飞船稍低
-        self.bullet_width = 8
+        self.bullet_width = 6
         self.bullet_height = 50
         self.bullet_color = 60,60,60
         self.bullets_allowed = 20   #屏幕上未消失的子弹数限制为20颗
 
-        #以什么样的速度加快游戏节奏
+        #加快游戏节奏的速度
         self.speedup_scale = 1.1
+        #外星人点数的提高速度
+        self.score_scale = 1.5
         self.initialize_dynamic_settings()
+
+        #计分
+        self.alien_points = 50
 
     def initialize_dynamic_settings(self):
         """初始化随游戏进行而变化的设置"""
@@ -34,7 +39,9 @@ class Settings():
         self.fleet_direction = 1
 
     def increase_speed(self):
-        """提高速度设置"""
+        """提高速度设置和外星人分数"""
         self.ship_speed_factor *= self.speedup_scale
         self.bullet_speed_factor *= self.speedup_scale
         self.alien_speed_factor *= self.speedup_scale
+
+        self.alien_points = int(self.alien_points * self.score_scale)

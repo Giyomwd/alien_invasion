@@ -56,7 +56,7 @@ def check_play_button(alien_settings,screen,stats,play_button,ship,aliens,bullet
         create_aliens_group(alien_settings,screen,aliens,ship)
         ship.center_ship()
 
-def update_screen(alien_settings,screen,ship,bullets,aliens,stats,play_button):
+def update_screen(alien_settings,screen,ship,bullets,aliens,stats,play_button,sb):
     """更新屏幕上的图像，并切换到新屏幕"""
     screen.fill(alien_settings.background_color)  # 每次循环时都重绘屏幕,用背景色填充屏幕
     #在飞船和外星人后面重绘所有子弹
@@ -64,6 +64,8 @@ def update_screen(alien_settings,screen,ship,bullets,aliens,stats,play_button):
         bullet.draw_bullet()   #将所有精灵绘制出来
     ship.ship_location()
     aliens.draw(screen)   #自动绘制编组内的每个外星人
+    #显示得分
+    sb.show_score()
     #如果游戏处于非活动状态，就绘制Play按钮.为让Play按钮位于其他所有屏幕元素上面，我们在绘制其他所有游戏元素后再绘制这个按钮，然后切换到新屏幕
     if not stats.game_active :
         play_button.draw_button()
@@ -71,7 +73,7 @@ def update_screen(alien_settings,screen,ship,bullets,aliens,stats,play_button):
     pygame.display.flip()  # 每次执行while循环时，都会绘制一个空屏幕，并擦去旧屏幕，使得只有新屏幕显示 。
     # 在我们移动游戏元素时，pygame.display.flip()将不断更新屏幕，以显示元素的新位置，并在原来的位置隐藏元素，从而营造平滑移动的效果
 
-def update_bullets(alien_settings,screen,ship,aliens,bullets):
+def update_bullets(alien_settings,screen,ship,aliens,bullets,stats,sb):
     """更新子弹的位置，并删除已消失的子弹"""
     #更新子弹的位置
     bullets.update()
@@ -79,14 +81,18 @@ def update_bullets(alien_settings,screen,ship,aliens,bullets):
     for bullet in bullets.copy():  # 在for循环中，不应从列表或编组中删除条目，因此必须遍历编组的副本
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
-    check_bullet_alien_collisions(alien_settings, screen, ship, aliens, bullets)
+    check_bullet_alien_collisions(alien_settings, screen, ship, aliens, bullets,stats,sb)
 
-def check_bullet_alien_collisions(alien_settings,screen,ship,aliens,bullets):
+def check_bullet_alien_collisions(alien_settings,screen,ship,aliens,bullets,stats,sb):
     """响应子弹和外星人的碰撞"""
-    #删除发生碰撞的子弹和外星人
+    # collisions ：下面这行代码遍历编组bullets中的没每颗子弹，再遍历编组aliens中的每个外星人。每当有子弹和外星人的rect重叠时，groupcollide（）就
+    # 在它返回的字典中添加一个键-值对。两个实参True告诉Pygame删除发生碰撞的子弹和外星人
     collisions = pygame.sprite.groupcollide(bullets,aliens,True,True)
-    #collisions ：上面这行代码遍历编组bullets中的没每颗子弹，再遍历编组aliens中的每个外星人。每当有子弹和外星人的rect重叠时，groupcollide（）就
-    #在它返回的字典中添加一个键-值对。两个实参True告诉Pygame删除发生碰撞的子弹和外星人
+    if collisions:
+        for aliens in collisions.values():
+            stats.score += alien_settings.alien_points
+            sb.prep_score()
+        check_high_score(stats,sb)
     if len(aliens) == 0:
         #删除现有的子弹并创建一群外星人
         bullets.empty()   #删除编组中余下的所有精灵
@@ -126,12 +132,12 @@ def create_alien(alien_settings,screen,aliens,alien_number,row_number):
     alien_width = alien.rect.width
     alien.x = alien_width + 2 * alien_width * alien_number
     alien.rect.x = alien.x
-    alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+    alien.rect.y = 2*alien.rect.height + 3 * alien.rect.height * row_number
     aliens.add(alien)
 
 def get_number_rows(alien_settings,ship_height,alien_height):
     """计算屏幕可容纳多少行外星人"""
-    available_space_y = alien_settings.screen_height - ship_height -alien_height * 7   #7是为了缩小y的值，拉大和飞船的距离
+    available_space_y = alien_settings.screen_height - ship_height -alien_height * 10  #10是为了缩小y的值，拉大和飞船的距离
     number_rows = int(available_space_y / (2 * alien_height))
     return number_rows
 
@@ -184,3 +190,8 @@ def check_aliens_bottom(ai_settings,stats,screen,ship,aliens,bullets):
             ship_hit(ai_settings, stats, screen, ship, aliens, bullets)
             break
 
+def check_high_score(stats,sb):
+    """检查是否诞生了新的最高分"""
+    if stats.score > stats.high_score:
+        stats.high_score = stats.score
+        sb.prep_high_score()
