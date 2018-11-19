@@ -10,7 +10,7 @@ class Alien(Sprite):  ##Sprite为了统一处理一系列显示对象 子弹
         self.ai_settings = ai_settings
 
         #加载外星人图像，并设置其rect属性
-        image = pygame.image.load('images/alien.bmp')  # 返回一个表示外星人的surface
+        image = pygame.image.load('images/alien.jpg')  # 返回一个表示外星人的surface
         self.image = pygame.transform.scale(image, (40, 40))
         self.rect = self.image.get_rect()  # get_rect() 获取相应的suiface的属性rect(矩形？)
 

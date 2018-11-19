@@ -1,15 +1,17 @@
 #飞船
 import pygame
 from settings import Settings
+from pygame.sprite import Sprite
 
-class Ship():
+class Ship(Sprite):
 
     def __init__(self, screen ,al_settings):
         """初始化飞船并设置其初始化"""
+        super().__init__()
         self.screen = screen
         self.al_settings = al_settings
         #加载飞船图像并获取其外接矩形
-        image = pygame.image.load('images/ship.bmp') #返回一个表示飞船的surface
+        image = pygame.image.load('images/ship.jpg') #返回一个表示飞船的surface
         self.image = pygame.transform.scale(image,(40,40))
         self.rect = self.image.get_rect()   #get_rect() 获取相应的suiface的属性rect(矩形？)
         self.screen_rect = screen.get_rect()  #将表示屏幕的矩形存储在self.screen_rect中

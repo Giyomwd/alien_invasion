@@ -32,7 +32,7 @@ def run_game():
         if stats.game_active:
             ship.update()
             game_function.update_bullets(alien_settings,screen,ship,aliens,bullets,stats,sb)
-            game_function.update_aliens(alien_settings,stats,screen,ship,aliens,bullets)
+            game_function.update_aliens(alien_settings,stats,screen,ship,aliens,bullets,sb)
         game_function.update_screen(alien_settings,screen,ship,bullets,aliens,stats,play_button,sb)
 
 run_game()
