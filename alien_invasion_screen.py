@@ -27,7 +27,7 @@ def run_game():
     game_function.create_aliens_group(alien_settings,screen,aliens,ship)
     #开始游戏的循环
     while True:
-        game_function.check_events(alien_settings,screen,stats,play_button,ship,bullets)
+        game_function.check_events(alien_settings,screen,stats,play_button,ship,aliens,bullets)
         if stats.game_active:
             ship.update()
             game_function.update_bullets(alien_settings,screen,ship,aliens,bullets)
