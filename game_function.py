@@ -25,7 +25,7 @@ def check_keyup_events(event,ship):
     if event.key == pygame.K_LEFT:
         ship.moving_left = False
 
-def check_events(al_settings,screen,stats,play_button,ship,aliens,bullets):
+def check_events(al_settings,screen,stats,play_button,ship,aliens,bullets,sb):
     """监控键盘和鼠标事件"""
     for event in pygame.event.get():  # 为访问pygame检测到的事件，使用方法pygame.event.get() 所有键盘和鼠标事件都将促使for循环运行
         if event.type == pygame.QUIT:   #单击窗口的关闭按钮，会检测到pygame.QUIT事件
@@ -36,9 +36,9 @@ def check_events(al_settings,screen,stats,play_button,ship,aliens,bullets):
             check_keyup_events(event,ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:   #鼠标点击事件
             mouse_x,mouse_y = pygame.mouse.get_pos()  #pygame.mouse.get_pos()返回一个元祖，其中包含玩家单击时鼠标的x和y坐标
-            check_play_button(al_settings,screen,stats,play_button,ship,aliens,bullets,mouse_x,mouse_y)  #将x和y轴坐标传递给check_play_button函数
+            check_play_button(al_settings,screen,stats,play_button,ship,aliens,bullets,mouse_x,mouse_y,sb)  #将x和y轴坐标传递给check_play_button函数
 
-def check_play_button(alien_settings,screen,stats,play_button,ship,aliens,bullets,mouse_x,mouse_y):
+def check_play_button(alien_settings,screen,stats,play_button,ship,aliens,bullets,mouse_x,mouse_y,sb):
     """在玩家单击Play按钮时开始新游戏"""
     button_clicked = play_button.rect.collidepoint(mouse_x,mouse_y)  #collidepoint（x,y）函数会检查x和yd所得到的坐标 是否在play_button.rect里面
     if  button_clicked and not stats.game_active:
@@ -49,6 +49,10 @@ def check_play_button(alien_settings,screen,stats,play_button,ship,aliens,bullet
         #重置游戏统计信息
         stats.reset_stats()
         stats.game_active = True
+        #重置记分牌图像
+        sb.prep_score()
+        sb.prep_high_score()
+        sb.prep_level()
         #清空外星人列表和子弹列表
         aliens.empty()
         bullets.empty()
@@ -94,9 +98,12 @@ def check_bullet_alien_collisions(alien_settings,screen,ship,aliens,bullets,stat
             sb.prep_score()
         check_high_score(stats,sb)
     if len(aliens) == 0:
-        #删除现有的子弹并创建一群外星人
+        #如果整群外星人都被消灭，就提高一个等级
         bullets.empty()   #删除编组中余下的所有精灵
         alien_settings.increase_speed()
+        #提高等级
+        stats.level +=1
+        sb.prep_level()
         create_aliens_group(alien_settings, screen, aliens, ship)
 
 def fire_bullet(al_settings,screen,ship,bullets):

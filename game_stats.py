@@ -7,6 +7,7 @@ class GameStats():
         #让游戏一开始处于非活动状态
         self.game_active = False
         self.score = 0
+        self.level = 1
         #在任何情况下都不应该重置最高得分
         self.high_score = 0
     def reset_stats(self):
