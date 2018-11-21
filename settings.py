@@ -15,8 +15,8 @@ class Settings():
         self.fleet_drop_speed = 10   #指定有外星人撞到屏幕边缘时，外星人群向下移动的速度
 
         #子弹设置  宽3像素、高15像素的深灰色子弹。子弹速度比飞船稍低
-        self.bullet_width = 6
-        self.bullet_height = 50
+        self.bullet_width = 3
+        self.bullet_height = 30
         self.bullet_color = 60,60,60
         self.bullets_allowed = 20   #屏幕上未消失的子弹数限制为20颗
 
